@@ -1,7 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import "./solar.css";
 
 const BirthInputPage = () => {
+  const navigate = useNavigate();
+  const canvasRef = useRef(null);
+
   const [formData, setFormData] = useState({
     name: "",
     gender: "",
@@ -24,6 +28,18 @@ const BirthInputPage = () => {
       .then(response => response.json())
       .then(data => setCitiesData(data))
       .catch(err => console.error("Error loading cities.json", err));
+  }, []);
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "/voronoi.js";
+    script.async = true;
+
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
   }, []);
 
   const handleChange = (e) => {
@@ -72,14 +88,32 @@ const BirthInputPage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form Data:", formData);
-    alert("Form submitted! (Check console for data)");
+  const handleShowPast = async () => {
+    if (!formData.name || !formData.dob || !formData.tob || !formData.lat || !formData.lng) {
+      alert("Please fill all required details properly.");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:5001/generate-past", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await res.json();
+      navigate("/past", { state: { ...data } });
+
+    } catch (error) {
+      alert("Backend Error: Please check server is running");
+      console.error(error);
+    }
   };
 
   return (
     <div className="solar-syst" style={{ width: "100vw", height: "100vh", position: "relative", overflow: "hidden" }}>
+      <canvas ref={canvasRef} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 0 }}></canvas>
+
       <div style={{
         position: "absolute",
         top: "50%",
@@ -89,13 +123,13 @@ const BirthInputPage = () => {
         padding: "30px",
         borderRadius: "15px",
         color: "#eee",
-        zIndex: 10,
+        zIndex: 1,
         backdropFilter: "blur(10px)",
         boxShadow: "0 0 25px rgba(255,0,255,0.3)"
       }}>
         <h2 style={{ marginBottom: "20px", fontFamily: "'Playfair Display', serif" }}>Enter Birth Details</h2>
 
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px", width: "320px" }}>
+        <form style={{ display: "flex", flexDirection: "column", gap: "15px", width: "320px" }}>
           <input type="text" name="name" placeholder="Your Name..." value={formData.name} onChange={handleChange} style={inputStyle} />
 
           <select name="gender" value={formData.gender} onChange={handleChange} style={{ ...inputStyle, ...selectStyle }}>
@@ -106,7 +140,6 @@ const BirthInputPage = () => {
           </select>
 
           <input type="date" name="dob" value={formData.dob} onChange={handleChange} style={inputStyle} />
-
           <input type="time" name="tob" value={formData.tob} onChange={handleChange} style={inputStyle} />
 
           <div style={{ position: "relative" }}>
@@ -158,53 +191,61 @@ const BirthInputPage = () => {
             </div>
           )}
 
-          <button type="submit" style={buttonStyle}>Submit</button>
+          <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
+            <button type="button" onClick={handleShowPast} style={{ ...buttonStyle, flex: 1 }}>
+              Show Past
+            </button>
+            <button type="button" style={{ ...buttonStyle, flex: 1 }}>
+              Show Future
+            </button>
+          </div>
+
         </form>
       </div>
     </div>
   );
 };
 
-// Input Style
 const inputStyle = {
-  padding: "12px",
-  borderRadius: "7px",
-  border: "1px solid #8a2be2",
-  background: "#111",
+  padding: "14px",
+  borderRadius: "10px",
+  border: "1px solid rgba(255, 0, 255, 0.5)",
+  background: "rgba(17, 17, 17, 0.8)",
   color: "#eee",
   width: "100%",
   fontFamily: "'Playfair Display', serif",
   outline: "none",
-  transition: "0.3s",
-  height: "45px",
-  boxShadow: "0 0 5px rgba(255,0,255,0.3)",
+  transition: "all 0.3s ease",
+  height: "50px",
+  boxShadow: "0 0 10px rgba(255,0,255,0.15)",
   boxSizing: "border-box",
   appearance: "none",
   WebkitAppearance: "none",
   MozAppearance: "none"
 };
 
-// Select Arrow Style
 const selectStyle = {
   backgroundImage: "url(\"data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>\")",
   backgroundRepeat: "no-repeat",
-  backgroundPosition: "right 10px center",
+  backgroundPosition: "right 12px center",
   backgroundSize: "16px",
-  paddingRight: "30px"
+  paddingRight: "35px",
+  cursor: "pointer"
 };
 
-// Submit Button Style
 const buttonStyle = {
-  padding: "12px",
+  padding: "14px",
   background: "linear-gradient(45deg, #8a2be2, #ff00ff)",
   color: "#fff",
   border: "none",
-  borderRadius: "7px",
+  borderRadius: "10px",
   cursor: "pointer",
   fontFamily: "'Playfair Display', serif",
   fontSize: "1rem",
-  transition: "0.3s",
-  boxShadow: "0 0 8px rgba(255,0,255,0.4)"
+  transition: "all 0.3s ease",
+  boxShadow: "0 0 15px rgba(255,0,255,0.5)",
+  letterSpacing: "0.5px"
 };
+
 
 export default BirthInputPage;
