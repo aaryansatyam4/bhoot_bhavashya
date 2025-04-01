@@ -95,7 +95,7 @@ const BirthInputPage = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:5001/generate-past", {
+      const res = await fetch("https://bhoot-bhavashya.onrender.com/generate-past", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
