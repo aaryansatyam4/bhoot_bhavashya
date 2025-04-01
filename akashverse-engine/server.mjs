@@ -25,7 +25,7 @@ app.post("/generate-past", async (req, res) => {
   }
 });
 
-app.post("/return-true", (req, res) => {
+app.get("/return-true", (req, res) => {
   return res.json({ result: true });
 });
 
