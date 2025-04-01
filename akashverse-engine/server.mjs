@@ -25,9 +25,10 @@ app.post("/generate-past", async (req, res) => {
   }
 });
 
-app.post("/return-true"){
-  return res.json({result: true});
-}
+app.post("/return-true", (req, res) => {
+  return res.json({ result: true });
+});
+
 
 app.listen(5001, () => {
   console.log("🚀 AkashVerse Backend Running on https://bhoot-bhavashya.onrender.com");
