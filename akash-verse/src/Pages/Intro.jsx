@@ -166,7 +166,7 @@ const Intro = () => {
   return (
     <div style={{ position: "fixed", width: "100vw", height: "100vh", overflow: "hidden" }}>
       {/* Background Audio */}
-      <audio ref={audioRef} src="bgm.mp3" loop autoPlay style={{ display: 'none' }} />
+    
 
       {/* Canvas */}
       <canvas ref={canvasBottomRef} style={{ position: "absolute", top: 0, left: 0 }} />

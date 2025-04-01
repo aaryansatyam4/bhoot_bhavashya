@@ -30,5 +30,5 @@ app.post("/return-true"){
 }
 
 app.listen(5001, () => {
-  console.log("🚀 AkashVerse Backend Running on http://localhost:5001");
+  console.log("🚀 AkashVerse Backend Running on https://bhoot-bhavashya.onrender.com");
 });
