@@ -110,6 +110,28 @@ const BirthInputPage = () => {
     }
   };
 
+  const handleShowFuture = async () => {
+    if (!formData.name || !formData.dob || !formData.tob || !formData.lat || !formData.lng) {
+      alert("Please fill all required details properly.");
+      return;
+    }
+
+    try {
+      const res = await fetch("https://bhoot-bhavashya.onrender.com/generate-future", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await res.json();
+      navigate("/future", { state: { ...data } });
+
+    } catch (error) {
+      alert("Backend Error: Please check server is running");
+      console.error(error);
+    }
+  };
+
   return (
     <div className="solar-syst" style={{ width: "100vw", height: "100vh", position: "relative", overflow: "hidden" }}>
       <canvas ref={canvasRef} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 0 }}></canvas>
@@ -195,7 +217,7 @@ const BirthInputPage = () => {
             <button type="button" onClick={handleShowPast} style={{ ...buttonStyle, flex: 1 }}>
               Show Past
             </button>
-            <button type="button" style={{ ...buttonStyle, flex: 1 }}>
+            <button type="button" onClick={handleShowFuture} style={{ ...buttonStyle, flex: 1 }}>
               Show Future
             </button>
           </div>
@@ -246,6 +268,5 @@ const buttonStyle = {
   boxShadow: "0 0 15px rgba(255,0,255,0.5)",
   letterSpacing: "0.5px"
 };
-
 
 export default BirthInputPage;

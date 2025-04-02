@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Intro from './Pages/Intro';
 import BirthInputPage from './Pages/BirthInputPage/BirthInputPage';
 import Past from './Pages/Past';
+import Future from './Pages/Future'
 
 const App = () => {
   const audioRef = useRef(null);
@@ -24,6 +25,7 @@ const App = () => {
         <Route path="/" element={<Intro />} />
         <Route path="/birth-input" element={<BirthInputPage />} />
         <Route path="/past" element={<Past />} />
+        <Route path="/future" element={<Future />} />
       </Routes>
     </Router>
   );
